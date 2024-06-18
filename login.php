@@ -7,12 +7,8 @@ require_once "conexao.php";
 $conexao = conectar();
 
 $sql = "SELECT * FROM usuario WHERE email='$email'";
-$resultado = mysqli_query($conexao, $sql);
-if ($resultado === false) {
-    echo "Erro ao buscar usuário! " .
-        mysqli_errno($conexao) . ": " . mysqli_error($conexao);
-    die();
-}
+$resultado = executarSQL($conexao, $sql);
+
 $usuario = mysqli_fetch_assoc($resultado);
 if ($usuario == null) {
     echo "Email não existe no sistema! 
