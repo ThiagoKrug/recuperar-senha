@@ -32,8 +32,8 @@ try {
     $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
     $mail->setLanguage('br');
-    //$mail->SMTPDebug = SMTP::DEBUG_OFF;  //tira as mensagens de erro
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER; //imprime as mensagens de erro
+    //$mail->SMTPDebug = SMTP::DEBUG_OFF;  //tira as mensagens
+    $mail->SMTPDebug = SMTP::DEBUG_SERVER; //imprime as mensagens
     $mail->isSMTP();                       //envia o email usando SMTP
     $mail->Host = 'smtp.gmail.com';        //Set the SMTP server to send through
     $mail->SMTPAuth = true;                //Enable SMTP authentication
@@ -63,14 +63,26 @@ try {
     $mail->Body = 'Olá!<br>
         Você solicitou a recuperação da sua conta no nosso sistema.
         Para isso, clique no link abaixo para realizar a troca de senha:<br>
-<a href="' . $_SERVER['SERVER_NAME'] . '/nova-senha.php?email=' . $usuario['email'] .
-        '&token=' . $token . '">Clique aqui para recuperar o acesso à sua conta!</a><br>
+        <a href="' . $_SERVER['SERVER_NAME'] . '/recuperar-senha/nova-senha.php?email='
+        . $usuario['email'] . '&token=' . $token .
+        '">Clique aqui para recuperar o acesso à sua conta!</a><br>
         <br>
         Atenciosamente<br>
         Equipe do sistema...';
 
     $mail->send();
     echo 'Email enviado com sucesso!<br>Confira o seu email.';
+    
+    // gravar as informações na tabela recuperar-senha
+    $data = new DateTime('now');
+    $agora = $data->format('Y-m-d H:i:s');
+    
+    $sql2 = "INSERT INTO recuperar-senha 
+             (email, token, data_criacao, usado)
+             VALUES ('" . $usuario['email'] . "', '$token', 
+             '$agora', 0)";
+    
+
 } catch (Exception $e) {
     echo "Não foi possível enviar o email. 
           Mailer Error: {$mail->ErrorInfo}";
