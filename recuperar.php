@@ -72,17 +72,18 @@ try {
 
     $mail->send();
     echo 'Email enviado com sucesso!<br>Confira o seu email.';
-    
+
     // gravar as informações na tabela recuperar-senha
+    date_default_timezone_set('America/Sao_Paulo');
     $data = new DateTime('now');
     $agora = $data->format('Y-m-d H:i:s');
-    
-    $sql2 = "INSERT INTO recuperar-senha 
+
+    $sql2 = "INSERT INTO `recuperar-senha` 
              (email, token, data_criacao, usado)
              VALUES ('" . $usuario['email'] . "', '$token', 
              '$agora', 0)";
-    
 
+    executarSQL($conexao, $sql2);
 } catch (Exception $e) {
     echo "Não foi possível enviar o email. 
           Mailer Error: {$mail->ErrorInfo}";
