@@ -1,9 +1,8 @@
 <?php
-
-// verificar o email
-// verificar o token
-$email = $_GET['email'];
-$token = $_GET['token'];
+$email = $_POST['email'];
+$token = $_POST['token'];
+$senha = $_POST['senha'];
+$repetirSenha = $_POST['repetirSenha'];
 
 require_once "conexao.php";
 $conexao = conectar();
@@ -40,26 +39,22 @@ if ($recuperar == null) {
         de recuperação de senha.";
         die();
     }
+
+    if ($senha != $repetirSenha) {
+        echo "A senha que você digitou é diferente da senha que
+              você digitou no repetir senha. Por favor tente 
+              novamente!";
+        die();
+    }
+
+    $sql2 = "UPDATE usuario SET senha='$senha' WHERE 
+             email='$email'";
+    executarSQL($conexao, $sql2);
+    $sql3 = "UPDATE `recuperar-senha` SET usado=1 WHERE 
+             email='$email' AND token='$token'";
+    executarSQL($conexao, $sql3);
+
+    echo "Nova senha cadastrada com sucesso! Faça o login para 
+          acessar o sistema.<br>";
+    echo "<a href='index.php'>Acessar sistema</a>";
 }
-?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Senha</title>
-</head>
-
-<body>
-    <form action="salvar-nova-senha.php" method="post">
-        <input type="hidden" name="email" value="<?= $email ?>">
-        <input type="hidden" name="token" value="<?= $token ?>">
-        Email: <?= $email ?><br>
-        <label>Senha: <input type="password" name="senha"></label><br>
-        <label>Repita a senha: <input type="password" name="repetirSenha"></label><br>
-        <input type="submit" value="Salvar nova senha">
-    </form>
-</body>
-
-</html>
